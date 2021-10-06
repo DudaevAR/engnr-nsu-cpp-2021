@@ -1,0 +1,62 @@
+name: "CI"
+
+# Controls when the action will run. Triggers the workflow on push or pull request events
+on:
+  push:
+  pull_request:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  env-secret-test-windows:
+    name: "Secret environment variable test (Windows)"
+    environment: Lab6
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          submodules: recursive
+      - name: Test environment
+        shell: cmd
+        env:
+          ENV_SECRET_TEST: ${{ secrets.ENV_SECRET_TEST }}
+        run: |
+          if "%ENV_SECRET_TEST%" == "" (
+            echo "ENV_SECRET_TEST is not set"
+            exit /b 1
+          )
+
+  env-secret-test-ubuntu:
+    name: "Secret environment variable test (Ubuntu)"
+    environment: Lab6
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          submodules: recursive
+      - name: Test environment
+        env:
+          ENV_SECRET_TEST: ${{ secrets.ENV_SECRET_TEST }}
+        run: |
+          ENV_SECRET_TEST_LEN=${#ENV_SECRET_TEST}
+          echo ENV_SECRET_TEST_LEN="$ENV_SECRET_TEST_LEN"
+          if [ "$ENV_SECRET_TEST_LEN" -lt "1" ]; then
+            exit 1
+          fi
+
+  env-secret-test-macos:
+    name: "Secret environment variable test (macOS)"
+    environment: Lab6
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          submodules: recursive
+      - name: Test environment
+        env:
+          ENV_SECRET_TEST: ${{ secrets.ENV_SECRET_TEST }}
+        run: |
+          ENV_SECRET_TEST_LEN=${#ENV_SECRET_TEST}
+          echo ENV_SECRET_TEST_LEN="$ENV_SECRET_TEST_LEN"
+          if [ "$ENV_SECRET_TEST_LEN" -lt "1" ]; then
+            exit 1
+          fi
